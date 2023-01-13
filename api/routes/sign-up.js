@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { body, check, validationResult } from 'express-validator';
 import { UserModel } from '../models/User.js';
+import bcrypt from 'bcrypt';
 
 export const signUp = Router();
 
@@ -28,7 +29,9 @@ signUp.post(
 
       const { username, password } = request.body;
 
-      const user = await UserModel.create({ username, password });
+      let hash = await bcrypt.hash(password, 5);
+
+      const user = await UserModel.create({ username, password: hash });
 
       return response
         .status(201)
