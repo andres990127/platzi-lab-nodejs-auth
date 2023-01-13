@@ -37,8 +37,10 @@ login.post(
         });
       }
 
-      // @todo: generate a JWT token
-      const token = 'jwt-token';
+      const payload = {
+        sub: user.id,
+      }
+      const token = jwt.sign(payload, process.env.JWT_KEY);
 
       return response.status(201).json({ token, username: user.username });
     } catch (error) {
