@@ -11,6 +11,8 @@ app.use(cors());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
+import './auth/index.js'
+
 // API
 // @todo: Almancenar el password de forma segura
 app.use('/api/v1/sign-up', signUp);
