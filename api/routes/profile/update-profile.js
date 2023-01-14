@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { body, check, validationResult } from 'express-validator';
 import { UserModel } from '../../models/User.js';
 import passport from 'passport';
+import bcrypt from 'bcrypt';
 
 export const updateUser = Router();
 
@@ -14,11 +15,18 @@ updateUser.put(
   async (request, response) => {
     try {
       const userId = request.user.sub;
+      let data = request.body;
 
-      const data = await UserModel.findByIdAndUpdate({ _id: userId }, request.body);
+      if(request.body.password){
+        const hash = await bcrypt.hash(data.password, 5);
+        data = {...data, password: hash}
+      }
+
+      const { _id, username} = await UserModel.findByIdAndUpdate({ _id: userId }, data);
 
       return response.status(200).json({
-        data
+        _id,
+        username
       });
 
     } catch (error) {
