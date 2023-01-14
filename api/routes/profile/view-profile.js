@@ -12,14 +12,28 @@ viewUser.get(
 
   // @todo: Ver información del usuario actual según la sesión del token JWT
   async (request, response) => {
+    try {
+      const userId = request.user.sub;
 
-    const userId = request.user.sub;
+      const data = await UserModel.findById({ _id: userId });
 
-    const { _id, username } = await UserModel.findById({ _id: userId });
+      if(!data){
+        return response.status(400).json({error: 'User not found'});
+      }
 
-    return response.status(200).json({
-      _id,
-      username
-    });
+      const { _id, username } = data;
+
+      return response.status(200).json({
+        _id,
+        username
+      });
+
+    } catch (error) {
+      console.error(`[View-profile]: ${error}`);
+
+      return response.status(500).json({
+        error: 'An unexpected error happened. Please try again later',
+      });
+    }
   }
 );
